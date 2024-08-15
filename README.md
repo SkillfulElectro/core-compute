@@ -8,3 +8,5 @@ fast , simple and cross-platform parallel computing library
 - call compute!(compute_kernel ,&mut info , ...)
 - after computing , the compute macro will replace data field of infos with new data which gpu set to them
 - and done !
+
+** this project is part of Cross-CUDA compiler **
