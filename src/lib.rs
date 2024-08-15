@@ -1,5 +1,4 @@
-use std::{borrow::Cow, str::FromStr};
-use wgpu::util::DeviceExt;
+
 
 /// for starting your computing mission on gpu
 /// first you need to write your kernel code 
@@ -13,10 +12,10 @@ use wgpu::util::DeviceExt;
 /// amounts of threads used = @workgroup_size (which you specify in your shader code) * x * y * z
 #[derive(Debug)]
 pub struct compute_kernel{
-    x : u32 ,
-    y : u32 , 
-    z : u32 ,
-    code : String,
+    pub x : u32 ,
+    pub y : u32 , 
+    pub z : u32 ,
+    pub code : String,
 }
 
 impl compute_kernel{
@@ -41,9 +40,9 @@ impl compute_kernel{
 /// the rest of variable types are not tested yet
 #[derive(Debug)]
 pub struct info<T>{
-    bind : u32,
-    group : u32,
-    data : T,
+    pub bind : u32,
+    pub group : u32,
+    pub data : T,
 }
 
 /// compute macro is used to start your computing
@@ -52,8 +51,10 @@ pub struct info<T>{
 /// compute macro starts the computing and when it finished
 /// it will change the data fields to new data which gpu did set
 /// to them , this way you can get results of the computing
+#[macro_export]
 macro_rules! compute {
     ($kernel:expr, $($data:expr),*) => {
+        use wgpu::util::DeviceExt;
 
         let instance = wgpu::Instance::default();
 
@@ -146,7 +147,7 @@ macro_rules! compute {
                 cpass.set_bind_group($data.group, &bind_group, &[]);
 
 
-                println!("Item: {:?}", $data);
+
 
                 )*
 
