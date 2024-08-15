@@ -17,7 +17,7 @@ let _wgpu_device : wgpu::Device;
 /// blocks of gpu is needed for your work
 ///
 /// amounts of threads used = @workgroup_size (which you specify in your shader code) * x * y * z
-#[derive(Debug)]
+#[derive(Debug , Clone)]
 pub struct compute_kernel{
     pub x : u32 ,
     pub y : u32 , 
@@ -45,7 +45,7 @@ impl compute_kernel{
 ///
 /// in data field you should use vec! of your data 
 /// the rest of variable types are not tested yet
-#[derive(Debug)]
+#[derive(Debug , Clone)]
 pub struct info<T>{
     pub bind : u32,
     pub group : u32,
