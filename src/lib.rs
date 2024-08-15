@@ -1,4 +1,11 @@
-
+// Performance block {
+/*
+let _wgpu_instance : wgpu::Instance;
+let _wgpu_adapter : wgpu::Adapter;
+let _wgpu_queue : wgpu::Queue;
+let _wgpu_device : wgpu::Device;
+*/
+// }
 
 /// for starting your computing mission on gpu
 /// first you need to write your kernel code 
