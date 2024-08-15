@@ -1,0 +1,12 @@
+[package]
+name = "core_compute_test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+core-compute = "0.2.0"
+wgpu = "22"
+pollster = "0.2"
+bytemuck = { version = "1.16", features = ["derive"] }
+flume = "0.11"
+
