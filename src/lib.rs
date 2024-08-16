@@ -15,6 +15,8 @@ pub struct compute_kernel{
     pub x : u32 ,
     pub y : u32 , 
     pub z : u32 ,
+    /// the default entry point is set to main function , so your kernel code in wgsl must 
+    /// contain main function
     pub code : String,
 }
 
