@@ -51,13 +51,16 @@ pub struct info<T>{
 /// your computing , the default compute_config will 
 /// be generated . but for customizing it you can 
 /// create your own compute_config and pass it directly to 
-/// compute_ext! macro as its first arg
+/// compute_ext! macro as its first arg . _entry_point is set to main by default
+/// change that to use another function for entry point of your kernel program
 #[derive(Debug)]
 pub struct compute_config{
     pub _wgpu_instance : wgpu::Instance,
     pub _wgpu_adapter : wgpu::Adapter,
     pub _wgpu_queue : wgpu::Queue,
     pub _wgpu_device : wgpu::Device,
+    /// by default it will be set to main function in your wgsl kernel code
+    pub _entry_point : String,
 }
 
 /// the default configuration tries to work on most of the devices 
@@ -84,6 +87,7 @@ impl Default for compute_config{
             _wgpu_adapter : adapter ,
             _wgpu_queue : queue ,
             _wgpu_device : device ,
+            _entry_point : "main".to_string() ,
         }
     }
 }
@@ -116,7 +120,7 @@ macro_rules! compute_ext {
                 label: None,
                 layout: None,
                 module: &shader,
-                entry_point: "main",
+                entry_point: &$config._entry_point ,
                 compilation_options: Default::default(),
                 cache: None,
             });
