@@ -12,8 +12,11 @@
 /// amounts of threads used = @workgroup_size (which you specify in your shader code) * x * y * z
 #[derive(Debug , Clone)]
 pub struct compute_kernel{
+    /// sets number of GPU blocks in x direction
     pub x : u32 ,
+    /// sets number of GPU blocks in y direction
     pub y : u32 , 
+    /// sets number of GPU blocks in z direction
     pub z : u32 ,
     /// the default entry point is set to main function , so your kernel code in wgsl must 
     /// contain main function
@@ -21,6 +24,7 @@ pub struct compute_kernel{
 }
 
 impl compute_kernel{
+    /// with your kernel code creates compute_kernel with x y and z set to 1
     fn new(code : String) -> Self{
         compute_kernel{
             x : 1,
@@ -42,8 +46,11 @@ impl compute_kernel{
 /// the rest of variable types are not tested yet
 #[derive(Debug , Clone)]
 pub struct info<T>{
+    /// sets binding index of variable in your kernel code (for now it must be same as your group)
     pub bind : u32,
+    /// sets group index of variable in your kernel code (for now it must be same as your binding)
     pub group : u32,
+    /// the data which you want grant access to GPU for rw
     pub data : T,
 }
 
@@ -55,9 +62,13 @@ pub struct info<T>{
 /// change that to use another function for entry point of your kernel program
 #[derive(Debug)]
 pub struct compute_config{
+    /// your custom wgpu instance
     pub _wgpu_instance : wgpu::Instance,
+    /// your custom wgpu adapter
     pub _wgpu_adapter : wgpu::Adapter,
+    /// your custom wgpu queue
     pub _wgpu_queue : wgpu::Queue,
+    /// your custom wgpu device
     pub _wgpu_device : wgpu::Device,
     /// by default it will be set to main function in your wgsl kernel code
     pub _entry_point : String,
@@ -65,6 +76,7 @@ pub struct compute_config{
 
 /// the default configuration tries to work on most of the devices 
 impl Default for compute_config{
+    /// it is used by compute macro to set defaults
     fn default() -> Self {
         let instance = wgpu::Instance::default();
         let adapter = pollster::block_on(instance
