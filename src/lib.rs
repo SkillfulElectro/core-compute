@@ -44,6 +44,8 @@ impl compute_kernel{
 ///
 /// in data field you should use vec! of your data 
 /// the rest of variable types are not tested yet
+///
+/// ** since v0.4.0 bind and group can be any value **
 #[derive(Debug , Clone)]
 pub struct info<T>{
     /// sets binding index of variable in your kernel code (for now it must be same as your group)
@@ -112,6 +114,7 @@ macro_rules! compute_ext {
     ($config:expr , $kernel:expr, $($data:expr),*) => {
         {
             use wgpu::util::DeviceExt;
+            use std::collections::HashMap;
 
 
 
@@ -145,6 +148,14 @@ macro_rules! compute_ext {
             let mut staging_buffers : Vec<wgpu::Buffer> = Vec::new();
             let mut sizes : Vec<wgpu::BufferAddress> = Vec::new();
             let mut storage_buffers : Vec<wgpu::Buffer> = Vec::new();
+            
+            #[derive(Debug)]
+            struct buf_index {
+                index: usize ,
+                bind : u32 ,
+            }
+
+            let mut grouponized : HashMap<u32 , Vec<buf_index>> = HashMap::new();
 
             {
                 let mut cpass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -156,6 +167,9 @@ macro_rules! compute_ext {
 
 
                 $(
+                    if !grouponized.contains_key(&$data.group){
+                        grouponized.insert($data.group , Vec::new());
+                    }
                     let refr = $data.data.as_slice();
                     let size = std::mem::size_of_val(refr) as wgpu::BufferAddress;
 
@@ -167,6 +181,7 @@ macro_rules! compute_ext {
                         usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                         mapped_at_creation: false,
                     });
+
                     staging_buffers.push(staging_buffer);
 
 
@@ -179,27 +194,44 @@ macro_rules! compute_ext {
                     });
                     storage_buffers.push(storage_buffer);
 
-
-                    let bind_group_layout = compute_pipeline.get_bind_group_layout($data.group);
-                    let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                        label: None,
-                        layout: &bind_group_layout,
-                        entries: &[wgpu::BindGroupEntry {
-                            binding: $data.bind,
-                            resource: storage_buffers[storage_buffers.len() - 1].as_entire_binding(),
-                        }],
+                    grouponized.get_mut(&$data.group).expect("ERROR : smth went wrong !").push(buf_index{
+                        index : sizes.len() - 1,
+                        bind : $data.bind
                     });
 
-
-                    cpass.set_pipeline(&compute_pipeline);
-                    cpass.set_bind_group($data.group, &bind_group, &[]);
+                )*
 
 
+                    for group in grouponized.keys(){
+                        let bind_group_layout = compute_pipeline.get_bind_group_layout(group.clone());
+
+                        let mut entries : Vec<wgpu::BindGroupEntry> = Vec::new();
+                        let data = grouponized.get(&group).expect("ERROR : smth went wrong !");
+                        for GroupEntry in data {
+                            entries.push(wgpu::BindGroupEntry{
+                                binding : GroupEntry.bind , 
+                                resource : storage_buffers[GroupEntry.index].as_entire_binding(),
+                            });
+                        }
+                        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                            label: None,
+                            layout: &bind_group_layout,
+                            entries: entries.as_slice() ,
+                        });
+
+                        cpass.set_pipeline(&compute_pipeline);
+                        cpass.set_bind_group(group.clone(), &bind_group, &[]);
 
 
-                    )*
+                    }
+                    
 
-                        cpass.insert_debug_marker("debug_marker");
+                    
+
+
+
+                    
+                    cpass.insert_debug_marker("debug_marker");
                     cpass.dispatch_workgroups($kernel.x, $kernel.y, $kernel.z); 
             }
 
@@ -253,7 +285,9 @@ macro_rules! compute_ext {
 #[macro_export]
 macro_rules! compute {
     ($kernel:expr, $($data:expr),*) => {
-        let config = core_compute::compute_config::default(); 
-        core_compute::compute_ext!(config , $kernel, $($data),*);   
+        {
+            let config = core_compute::compute_config::default(); 
+            core_compute::compute_ext!(config , $kernel, $($data),*);  
+        }
     };
 }

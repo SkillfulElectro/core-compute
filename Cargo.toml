@@ -1,9 +1,9 @@
 [package]
 name = "core-compute"
-version = "0.3.3"
+version = "0.4.0"
 edition = "2021"
 authors = ["ElectroMutex"]
-description = "fast , simple and cross-platform parallel computing library"
+description = "fast , simple and cross-platform GPGPU parallel computing library"
 license = "MIT"
 documentation = "https://docs.rs/core-compute/latest/core_compute/"
 homepage = "https://github.com/SkillfulElectro/core-compute.git"
