@@ -1,4 +1,5 @@
 # core-compute
+<img src="https://img.shields.io/static/v1?label=speed&message=fast&color=success" alt="speed" />
 fast , simple and cross-platform parallel computing library
 
 # Getting started
