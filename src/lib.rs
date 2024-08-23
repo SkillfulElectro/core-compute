@@ -257,8 +257,11 @@ macro_rules! compute_ext {
 
                 if let Ok(Ok(())) = pollster::block_on(receiver.recv_async()) {
                     let data = buffer_slice.get_mapped_range();
-                    $data.data = bytemuck::cast_slice(&data).to_vec();
+                    let casted_data = bytemuck::cast_slice(&data).to_vec();
 
+                    for (i, &value) in casted_data.iter().enumerate() {
+                        $data.data[i] = value;
+                    }
 
 
                     drop(data);

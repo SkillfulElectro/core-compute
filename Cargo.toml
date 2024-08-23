@@ -1,6 +1,6 @@
 [package]
 name = "core-compute"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 authors = ["ElectroMutex"]
 description = "fast , simple and cross-platform GPGPU parallel computing library"
