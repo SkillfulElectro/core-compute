@@ -3,6 +3,7 @@ fast , simple and cross-platform parallel computing library
 
 ## Special note
 - this version is part of native bindings of core-compute api https://github.com/SkillfulElectro/core-compute_native.git , so prefer to use v0.4.0
+- btw this version works fine for Rust too
 
 ## Getting started
 - first you will write your kernel code in shading languages which wgpu supports ( wgsl is recommended , default shader entry point is set to main so your kernel code in wgsl must contain main function )
