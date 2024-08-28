@@ -1,26 +1,24 @@
-name: Rust
+name: Build
+
+permissions: {}
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+  push:
+    branches:
+      - main
 
 env:
-  CARGO_TERM_COLOR: always
+  # Disable incremental compilation for faster from-scratch builds
+  CARGO_INCREMENTAL: 0
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Build
+    - run: rustup update
     - run: cargo build --release
-    - uses: actions/upload-artifact@v4 
-      with: 
+    - uses: actions/upload-artifact@v4
+      with:
         path: target/release/core_compute.rlib
-
-
-    
